@@ -1,0 +1,23 @@
+
+# IT Support Guide
+
+## 1. Password Reset
+Employees who forget their company account password should use the official password reset portal. They must verify their identity before creating a new password. If the reset portal does not work, they should contact the IT support team.
+
+## 2. VPN Connection Problems
+Employees who cannot connect to the company VPN should first check their internet connection. They should then restart the VPN application and try connecting again. If the problem continues, they should contact IT support and provide the error message.
+
+## 3. Software Installation
+Employees must request approval from the IT department before installing company software. Only approved software should be installed on company devices.
+
+## 4. Hardware Problems
+Employees experiencing laptop, keyboard, monitor, or other hardware problems should submit an IT support ticket. The ticket should include the device type, a description of the issue, and any error messages.
+
+## 5. Security Incidents
+Employees who suspect a phishing email, compromised account, or unauthorized access should report it to IT security immediately. They should not click suspicious links or share their passwords.
+
+## 6. Ticket Priority
+Critical incidents affect essential business systems or many employees. High-priority incidents prevent an employee or team from completing important work. Normal-priority incidents are routine requests that do not significantly interrupt business operations.
+
+## 7. IT Support Response
+The IT support team should review each ticket, classify the issue, assign an appropriate priority, and provide troubleshooting steps based on approved company documentation.

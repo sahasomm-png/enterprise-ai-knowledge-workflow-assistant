@@ -1,0 +1,21 @@
+# Python cache files
+__pycache__/
+*.py[cod]
+
+# Virtual environments
+.venv/
+venv/
+
+# Environment variables and secrets
+.env
+.streamlit/secrets.toml
+
+# Generated vector database and local databases
+artifacts/chroma_db/
+*.db
+
+# Testing cache
+.pytest_cache/
+
+# Operating system files
+.DS_Store
