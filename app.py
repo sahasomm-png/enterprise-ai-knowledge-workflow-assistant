@@ -1,4 +1,3 @@
-
 import streamlit as st
 import pandas as pd
 
@@ -228,11 +227,56 @@ with create_tab:
                     f"Ticket #{ticket['id']} created successfully."
                 )
 
+                # ------------------------------------------
+                # TICKET SUMMARY
+                # ------------------------------------------
+
                 st.subheader("Ticket Summary")
                 show_ticket_summary(ticket)
 
+                # ------------------------------------------
+                # NEW: CLASSIFICATION EXPLANATION
+                # ------------------------------------------
+
+                st.divider()
+                st.markdown("### 🧠 Classification Explanation")
+
+                st.write("**Category Reason:**")
+                st.write(
+                    ticket.get(
+                        "category_reason",
+                        "No category explanation available.",
+                    )
+                )
+
+                st.write("**Priority Reason:**")
+                st.write(
+                    ticket.get(
+                        "priority_reason",
+                        "No priority explanation available.",
+                    )
+                )
+
+                st.write("**Routing Reason:**")
+                st.write(
+                    ticket.get(
+                        "routing_reason",
+                        "No routing explanation available.",
+                    )
+                )
+
+                # ------------------------------------------
+                # ISSUE DESCRIPTION
+                # ------------------------------------------
+
                 st.markdown("### Issue Description")
-                st.write(ticket.get("description", description))
+                st.write(
+                    ticket.get("description", description)
+                )
+
+                # ------------------------------------------
+                # AI-SUGGESTED RESPONSE
+                # ------------------------------------------
 
                 st.markdown("### AI-Suggested Response")
                 st.write(
@@ -241,6 +285,10 @@ with create_tab:
                         "No suggested response was generated.",
                     )
                 )
+
+                # ------------------------------------------
+                # KNOWLEDGE-BASE SOURCES
+                # ------------------------------------------
 
                 show_sources(ticket.get("sources", []))
 
@@ -457,6 +505,36 @@ with manage_tab:
                         "Unassigned",
                     )
                 )
+                                # ------------------------------------------
+                # SAVED CLASSIFICATION EXPLANATIONS
+                # ------------------------------------------
+
+                st.divider()
+                st.markdown("### 🧠 Classification Explanation")
+
+                st.markdown("**Category Reason**")
+                st.write(
+                    safe_value(
+                        selected_ticket.get("category_reason"),
+                        "No category explanation available.",
+                    )
+                )
+
+                st.markdown("**Priority Reason**")
+                st.write(
+                    safe_value(
+                        selected_ticket.get("priority_reason"),
+                        "No priority explanation available.",
+                    )
+                )
+
+                st.markdown("**Routing Reason**")
+                st.write(
+                    safe_value(
+                        selected_ticket.get("routing_reason"),
+                        "No routing explanation available.",
+                    )
+                )
 
                 st.markdown("**AI-Suggested Response**")
                 st.write(
@@ -481,9 +559,9 @@ with manage_tab:
 
                 st.write(f"Current status: **{current_status}**")
 
-                # --------------------------------------------------
+                # ------------------------------------------
                 # APPROVE OR REJECT A PENDING RESPONSE
-                # --------------------------------------------------
+                # ------------------------------------------
 
                 if current_status == PENDING:
                     approve_col, reject_col = st.columns(2)
@@ -519,9 +597,9 @@ with manage_tab:
                             )
                             st.rerun()
 
-                # --------------------------------------------------
+                # ------------------------------------------
                 # UPDATE STATUS
-                # --------------------------------------------------
+                # ------------------------------------------
 
                 st.markdown("### Update Ticket Status")
 

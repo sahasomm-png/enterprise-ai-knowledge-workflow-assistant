@@ -57,3 +57,15 @@ def test_update_ticket_status():
 
     saved_ticket = get_ticket_by_id(ticket_id)
     assert saved_ticket["status"] == "In Progress"
+
+def test_update_nonexistent_ticket_returns_false():
+    updated = update_ticket_status(-1, "In Progress")
+
+    assert updated is False    
+
+import pytest
+
+
+def test_invalid_ticket_status_raises_value_error():
+    with pytest.raises(ValueError, match="Invalid status"):
+        update_ticket_status(1, "Waiting for Manager")    

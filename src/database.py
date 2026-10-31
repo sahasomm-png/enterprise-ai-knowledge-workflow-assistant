@@ -1,4 +1,3 @@
-
 import sqlite3
 from pathlib import Path
 
@@ -66,7 +65,7 @@ def initialize_database():
             ).fetchall()
         }
 
-        # Add assigned_team only if it doesn't exist yet.
+        # Add assigned_team if it doesn't exist.
         if "assigned_team" not in columns:
             connection.execute(
                 """
@@ -74,6 +73,22 @@ def initialize_database():
                 ADD COLUMN assigned_team TEXT
                 """
             )
+
+        # Add classification explanation columns if missing.
+        explanation_columns = {
+            "category_reason": "TEXT",
+            "priority_reason": "TEXT",
+            "routing_reason": "TEXT",
+        }
+
+        for column_name, column_type in explanation_columns.items():
+            if column_name not in columns:
+                connection.execute(
+                    f"""
+                    ALTER TABLE tickets
+                    ADD COLUMN {column_name} {column_type}
+                    """
+                )
 
         # Fill in team assignments for existing tickets.
         rows = connection.execute(
@@ -122,9 +137,12 @@ def save_ticket(ticket: dict) -> int:
                 priority,
                 suggested_response,
                 status,
-                assigned_team
+                assigned_team,
+                category_reason,
+                priority_reason,
+                routing_reason
             )
-            VALUES (?, ?, ?, ?, ?, ?)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
             """,
             (
                 ticket["description"],
@@ -133,6 +151,9 @@ def save_ticket(ticket: dict) -> int:
                 ticket["suggested_response"],
                 ticket.get("status", "Pending human approval"),
                 assigned_team,
+                ticket.get("category_reason", ""),
+                ticket.get("priority_reason", ""),
+                ticket.get("routing_reason", ""),
             ),
         )
 
