@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+import plotly.express as px
 
 from src.workflow import create_ticket_draft
 from src.rag import retrieve
@@ -104,11 +105,12 @@ def get_ticket_label(ticket):
 # APPLICATION TABS
 # ==================================================
 
-knowledge_tab, create_tab, manage_tab = st.tabs(
+knowledge_tab, create_tab, manage_tab, analytics_tab = st.tabs(
     [
         "📚 Knowledge Assistant",
         "🎫 Create Support Ticket",
         "🗂️ Ticket Management",
+        "📊 Analytics Dashboard",
     ]
 )
 
@@ -653,6 +655,151 @@ with manage_tab:
                     "This demo does not automatically send emails or "
                     "notify the assigned team."
                 )
+
+
+# ==================================================
+# TAB 4: ANALYTICS DASHBOARD
+# ==================================================
+
+with analytics_tab:
+    st.header("📊 Support Ticket Analytics")
+
+    st.write(
+        "Monitor ticket volume, priorities, categories, "
+        "team assignments, and resolution status."
+    )
+
+    # Retrieve all saved tickets from SQLite.
+    tickets = get_all_tickets()
+
+    if not tickets:
+        st.info(
+            "No tickets are available yet. "
+            "Create a support ticket to view analytics."
+        )
+
+    else:
+        # Convert ticket records into a Pandas DataFrame.
+        df = pd.DataFrame(tickets)
+
+        # Dashboard summary metrics.
+        total_tickets = len(df)
+        critical_tickets = (df["priority"] == "Critical").sum()
+        high_tickets = (df["priority"] == "High").sum()
+        normal_tickets = (df["priority"] == "Normal").sum()
+
+        col1, col2, col3, col4 = st.columns(4)
+
+        col1.metric("Total Tickets", total_tickets)
+        col2.metric("Critical Tickets", int(critical_tickets))
+        col3.metric("High Priority", int(high_tickets))
+        col4.metric("Normal Priority", int(normal_tickets))
+
+        st.divider()
+
+        # Ticket distribution by priority.
+        st.subheader("🎯 Tickets by Priority")
+
+        priority_counts = (
+            df["priority"]
+            .fillna("Unknown")
+            .value_counts()
+            .reset_index()
+        )
+        priority_counts.columns = ["Priority", "Tickets"]
+
+        priority_chart = px.pie(
+            priority_counts,
+            names="Priority",
+            values="Tickets",
+            title="Priority Distribution",
+            hole=0.4,
+        )
+
+        st.plotly_chart(priority_chart, use_container_width=True)
+
+        # Ticket distribution by category.
+        st.subheader("📂 Tickets by Category")
+
+        category_counts = (
+            df["category"]
+            .fillna("Unknown")
+            .value_counts()
+            .reset_index()
+        )
+        category_counts.columns = ["Category", "Tickets"]
+
+        category_chart = px.bar(
+            category_counts,
+            x="Category",
+            y="Tickets",
+            title="Ticket Categories",
+            text="Tickets",
+        )
+
+        st.plotly_chart(category_chart, use_container_width=True)
+
+        # Ticket distribution by assigned team.
+        st.subheader("👥 Tickets by Support Team")
+
+        team_counts = (
+            df["assigned_team"]
+            .fillna("Unassigned")
+            .value_counts()
+            .reset_index()
+        )
+        team_counts.columns = ["Team", "Tickets"]
+
+        team_chart = px.bar(
+            team_counts,
+            x="Team",
+            y="Tickets",
+            title="Team Workload",
+            text="Tickets",
+        )
+
+        st.plotly_chart(team_chart, use_container_width=True)
+
+        # Ticket distribution by status.
+        st.subheader("📌 Tickets by Status")
+
+        status_counts = (
+            df["status"]
+            .fillna("Unknown")
+            .value_counts()
+            .reset_index()
+        )
+        status_counts.columns = ["Status", "Tickets"]
+
+        status_chart = px.pie(
+            status_counts,
+            names="Status",
+            values="Tickets",
+            title="Ticket Status Distribution",
+            hole=0.4,
+        )
+
+        st.plotly_chart(status_chart, use_container_width=True)
+
+        # Display the underlying ticket records.
+        st.subheader("📋 Ticket Data")
+
+        st.dataframe(
+            df[
+                [
+                    "id",
+                    "description",
+                    "category",
+                    "priority",
+                    "assigned_team",
+                    "status",
+                    "created_at",
+                ]
+            ],
+            use_container_width=True,
+            hide_index=True,
+        )
+
 
 
 # ==================================================
